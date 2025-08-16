@@ -24,5 +24,6 @@ export { StatsAPI } from './api/StatsAPI';
 export type * from './types';
 
 // Default export
+import { LockLearnClient } from './core/LockLearnClient';
 const LockLearn = LockLearnClient.getInstance();
 export default LockLearn;

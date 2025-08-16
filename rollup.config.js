@@ -23,9 +23,7 @@ export default defineConfig([
       commonjs(),
       typescript({
         tsconfig: './tsconfig.json',
-        declaration: true,
-        declarationDir: 'dist',
-        rootDir: 'src'
+        declaration: false
       }),
       production && terser({
         compress: {
@@ -34,7 +32,7 @@ export default defineConfig([
         }
       })
     ].filter(Boolean),
-    external: ['react', 'react-dom']
+    external: ['react', 'react-dom', 'cross-fetch']
   },
   
   // CommonJS build
@@ -82,12 +80,11 @@ export default defineConfig([
       commonjs(),
       typescript({
         tsconfig: './tsconfig.json',
-        declaration: true,
-        declarationDir: 'dist'
+        declaration: false
       }),
       production && terser()
     ].filter(Boolean),
-    external: ['react', 'react-dom']
+    external: ['react', 'react-dom', 'cross-fetch']
   },
 
   // React hooks CommonJS build
@@ -111,6 +108,6 @@ export default defineConfig([
       }),
       production && terser()
     ].filter(Boolean),
-    external: ['react', 'react-dom']
+    external: ['react', 'react-dom', 'cross-fetch']
   }
 ]);

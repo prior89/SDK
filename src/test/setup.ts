@@ -6,17 +6,20 @@
 import 'cross-fetch/polyfill';
 
 // Mock crypto for Node.js environment
-Object.defineProperty(globalThis, 'crypto', {
-  value: {
-    randomUUID: () => 'mock-uuid',
-    getRandomValues: (arr: Uint8Array) => {
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return arr;
+if (!globalThis.crypto) {
+  Object.defineProperty(globalThis, 'crypto', {
+    value: {
+      randomUUID: () => 'mock-uuid',
+      getRandomValues: (arr: Uint8Array) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = Math.floor(Math.random() * 256);
+        }
+        return arr;
+      },
     },
-  },
-});
+    configurable: true
+  });
+}
 
 // Mock localStorage
 const localStorageMock = {
@@ -30,6 +33,7 @@ const localStorageMock = {
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
+  configurable: true
 });
 
 // Mock console methods in tests

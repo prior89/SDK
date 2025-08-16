@@ -145,3 +145,26 @@ export interface HealthCheckResponse {
   timestamp: string;
   services?: Record<string, 'up' | 'down'>;
 }
+
+export interface QueueStatus {
+  size: number;
+  bytes?: number;
+  deadLetterSize: number;
+  lastSyncAt?: string;
+  nextRetryAt?: string;
+}
+
+export interface SubmitResult {
+  accepted: number;
+  rejected: number;
+  errors?: Array<{ index: number; code: string; message: string }>;
+}
+
+export interface PartnerStats {
+  totalUsers: number;
+  totalWrongAnswers: number;
+  dailyActiveUsers?: number;
+  weeklyActiveUsers?: number;
+  topCategories?: Array<{ name: string; count: number }>;
+  updatedAt?: string;
+}

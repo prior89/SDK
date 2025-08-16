@@ -1,6 +1,6 @@
 {
   "name": "@locklearn/partner-sdk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "LockLearn 플랫폼과 연동하기 위한 TypeScript/JavaScript SDK",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -8,25 +8,15 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.esm.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs.js"
-      },
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
       "default": "./dist/index.esm.js"
     },
     "./react": {
-      "import": {
-        "types": "./dist/react.d.ts",
-        "default": "./dist/react.esm.js"
-      },
-      "require": {
-        "types": "./dist/react.d.cts",
-        "default": "./dist/react.cjs.js"
-      }
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react.esm.js",
+      "require": "./dist/react.cjs.js"
     }
   },
   "files": [
@@ -35,7 +25,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run clean && tsc --emitDeclarationOnly && rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "rollup -c -w",
     "dev": "npm run build:watch",
@@ -87,7 +77,8 @@
     }
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "tslib": "^2.6.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.0",
@@ -123,5 +114,6 @@
   ],
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }
