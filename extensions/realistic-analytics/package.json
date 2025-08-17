@@ -1,0 +1,47 @@
+{
+  "name": "@locklearn/realistic-analytics",
+  "version": "0.1.0",
+  "description": "LockLearn SDK 현실적 분석 확장 모듈 - 즉시 구현 가능한 기업용 학습 분석",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.esm.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "dev": "tsc -w",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "locklearn",
+    "analytics", 
+    "enterprise",
+    "business-intelligence",
+    "learning-insights",
+    "mvp"
+  ],
+  "author": "LockLearn Realistic Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@locklearn/partner-sdk": "^2.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "rollup": "^4.9.0",
+    "typescript": "^5.3.0"
+  }
+}

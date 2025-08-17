@@ -577,3 +577,369 @@ API/SDK를 통해 양방향 데이터 교환.
 본 발명은 온디바이스 AI와 서버 기반 클라우드를 혼합한 하이브리드 아키텍처를 채택하여, 보안·속도·확장성을 동시에 확보한다. 또한 SDK 형태로 제공됨으로써 외부 교육 앱·플랫폼과 손쉽게 연동 가능하다.
 
 이를 통해 본 발명은 기존 학습 앱의 한계를 극복하고, 사용자 맞춤형 학습 환경을 제공하며, 교육·에듀테크·디지털 헬스케어 분야에서 폭넓게 활용될 수 있다.
+
+안드로이드:
+
+완전한 “잠금화면 교체(Replacement)”는 현대 안드로이드에서 일반 앱 권한으로는 사실상 불가. 다만 잠금화면 위에 액티비티를 표시하거나(setShowWhenLocked/setTurnScreenOn), **정답 후 키가드 해제 요청(KeyguardManager.requestDismissKeyguard)**은 가능(보안 잠금이 있으면 PIN/생체 인증은 반드시 거침). 
+Android Developers
+Stack Overflow
+
+**Android 16(프리뷰)**에서 스마트폰용 잠금화면 위젯이 부활 예정이라 공식 표면(surface) 위에 콘텐츠·조작 요소를 올리는 방식이 유력. 위젯 상호작용은 버튼·토글 중심(텍스트 입력 등은 제한적). 
+The Verge
+
+수익화: 구글 플레이는 잠금화면 광고를 원칙적으로 금지(“잠금화면 전용 앱” 예외). 교육·B2B 유료화/라이선스 모델 권장. 
+Android Enthusiasts Stack Exchange
+
+데이터 수집: 앱 사용기록 수집은 **Usage Access(특별 접근)**를 사용자가 설정에서 켜줘야 함(일반 권한 아님). 이미지·미디어 접근도 최신 스코프드 스토리지 체계에서 명시 동의 필요.
+⇒ 현실적 구현 방향: “Android 위젯/알림 + 전체화면 액티비티(알람 유사)” 조합으로 퀴즈를 띄우고, 정답 시 앱 내 보상·누적학습 처리 → 키가드 해제 요청(보안 잠금은 사용자 인증 통과). OEM과 제휴하면 더 강력하지만 난이도 높음.
+
+iOS:
+
+잠금화면 교체·우회 불가. iOS 17/18 기준 위젯의 상호작용(버튼/토글)은 지원하지만, 텍스트 입력/풍부한 커스텀 UI는 제한. 잠금해제는 시스템 전용. Lock Screen용 WidgetKit/Live Activities/알림으로 “보기-터치-앱 전환” 플로우는 가능.
+⇒ 현실적 구현 방향: 잠금화면 위젯(정답 선택형/힌트 보기) + Live Activity 진행바 → 앱 열림 후 풀 문제(서술형 등), 또는 당일 학습 리마인더.
+
+근거 및 시사점 (요약)
+
+잠금화면 UI 권한/행동
+
+안드로이드 공식 API: KeyguardManager와 액티비티 플래그로 잠금화면 위 표시는 가능하지만, 보안 잠금 자체를 우회할 수는 없음(정답 맞췄다고 자동 해제 불가, 인증 단계는 남음). 
+Android Developers
+
+실무 사례(개발자 Q&A): 보안 잠금이 걸려 있으면 동일 코드가 동작 제한된다는 경험담 다수. 즉, 알람·통화류 예외 시나리오 수준의 UX가 한계. 
+Stack Overflow
+
+잠금화면 표면(위젯) 현황
+
+Android 16: 폰에서 Lock Screen Widgets 부활 예정(공식 위젯 표면 제공) → 퀴즈 버튼/다지선다형·힌트 보기 같은 경량 상호작용은 적합. 
+The Verge
+
+iOS 18: Lock Screen에서 조작 가능한 위젯/컨트롤이 확대되지만, 본격 **입력형 퀴즈(텍스트)**는 여전히 앱 전환 필요.
+
+스토어 정책/수익화
+
+구글 플레이: 일반 앱이 잠금화면에 광고 노출하는 건 금지(“잠금화면 전용 앱” 예외). 교육 서비스라면 구독/인앱 프리미엄·학교/기업 라이선스가 안전. 
+Android Enthusiasts Stack Exchange
+
+데이터 접근/프라이버시
+
+앱 사용기록(UsageStats): 사용자 설정에서 ‘사용 정보 접근’ 수동 허용 필요(수집 전 온보딩 동의 필수). 이미지/미디어는 최신 안드로이드에서 세분화 권한. 온디바이스 AI 처리는 법·신뢰 측면에서 강점.
+
+“가능/제한/권장” 체크리스트
+기술적으로 가능한 것 (안드로이드 중심)
+
+잠금화면 위젯/알림/전체화면 액티비티로 퀴즈 노출·선다형 응답·힌트 제공
+
+정답 시: 앱 내부 점수/오답노트/난이도 조정 반영 → 키가드 해제 요청(보안 잠금 시 인증 필요) 
+Android Developers
+
+온디바이스 모델(TFLite 등)로 개인화 출제/난이도 조절(프라이버시 친화)
+
+제한되는 것 / 피해야 할 것
+
+보안 잠금 자체를 우회하는 “정답=즉시 잠금해제”: 불가(정책·보안상) 
+Android Developers
+
+잠금화면 전면 광고: 플레이 정책 리스크 큼(전용 잠금화면 앱이 아니면 금지) 
+Android Enthusiasts Stack Exchange
+
+iOS에서 잠금화면 상 복잡한 입력: 위젯은 제한적 상호작용만, 본격 입력은 앱 전환
+
+권장 제품 전략 (현실적 플로우)
+
+Android (우선 출시)
+
+Lock Screen 위젯(다지선다/힌트 버튼) →
+
+터치 시 풀스크린 퀴즈 액티비티(showWhenLocked) →
+
+정답 시 학습 리워드·오답노트/난이도 조정 →
+
+사용자가 원하면 키가드 해제 요청(보안 잠금 시 생체/PIN 진행). 
+Android Developers
+
+Android 16 배포 시 위젯 강화 버전 제공. 
+The Verge
+
+iOS (동시 또는 2단계)
+
+Lock Screen 위젯 + Live Activities + 푸시 알림으로 “스낵형 출제/정답 버튼” → 앱 열어 상세 풀이·개인화/오답노트.
+
+특허/SDK 관점에서의 정합성(침해 회피 어려운 포인트)
+
+핵심 요소 결합:
+잠금화면 표면(위젯/알림/액티비티) + 오답노트/개인화 학습 + 실시간 난이도 조정(온디바이스) 를 연동된 플로우로 청구항에 묶어두면,
+위젯만/학습만 하는 단순 앱과 차별화된 시스템 레벨 결합을 보호할 수 있어 우회 구현 리스크를 높임.
+
+시스템 제약을 존중한 표현: “정답 시 키가드 해제 절차 호출”처럼 우회가 아님을 명시(정책 위반 위험 최소화) — 구현/심사 모두에 안전.
+
+사업성(요약 판단)
+
+가능성: 안드로이드에서는 정식 API/정책 범위 안에서 “잠금화면에서의 경량 상호작용 → 앱에서 본격 풀이” 모델이 충분히 가능. iOS는 위젯/알림 기반으로 축소 제공.
+
+성공 조건:
+
+권한 온보딩(Usage Access 등) 전환율 확보,
+
+위젯 3탭 이내 상호작용(마찰 최소화),
+
+학습 진척/보상 루프로 재방문(락 해제 빈도)에 얹힌 초단위 세션을 쌓는 설계,
+
+광고보다 구독/B2B 라이선스 중심의 수익화.
+
+리스크: 잠금화면 광고 금지 정책, iOS 입력 제약, 권한 허용 장벽. 그러나 Android 16의 위젯 부활이 표면 문제를 크게 완화할 가능성. 
+The Verge
+
+바로 적용 가능한 액션 아이템
+
+프로토타입
+
+Android: 위젯(다지선다형) + setShowWhenLocked 액티비티 + requestDismissKeyguard 흐름 PoC. 
+Android Developers
+
+iOS: WidgetKit 위젯(버튼 상호작용) + Live Activity + 알림 Deep Link.
+
+권한 온보딩 체커
+
+첫 실행 시 Usage Access/알림/미디어 권한 순차 가이드(툴팁/만화경로).
+
+수익화 설계
+
+광고 X(정책 리스크) → 구독(개인/가족) & 학교·기업 SDK 라이선스. 
+Android Enthusiasts Stack Exchange
+
+특허 문구 미세조정
+
+“잠금화면 위젯/표면”을 포함하는 표현,
+
+“정답 시 키가드 해제 절차 호출” 명시(우회 금지),
+
+“온디바이스 개인화/난이도 조정 + 오답노트”의 연동 처리 파이프라인을 청구항에 결속.
+
+참고 소스
+
+Android 16 Lock Screen 위젯 부활 기사(폰 대상) — The Verge. 
+The Verge
+
+KeyguardManager / 잠금화면 위 표시 관련 공식 레퍼런스(안드로이드) — Android Developers API. 
+Android Developers
+
+잠금 화면에서 액티비티/해제 동작 실무 이슈 사례 — Stack Overflow 토론. 
+Stack Overflow
+
+Usage Access(앱 사용기록) 특수 접근 필요 — Google 공식 샘플(UsageStats).
+
+잠금화면 광고 금지(전용 앱 예외) — TechRadar 정책 변경 보도. 
+Android Enthusiasts Stack Exchange
+
+iOS 18 위젯/컨트롤 상호작용(잠금화면에서 조작) — Apple WWDC24 세션.
+
+최종 판단
+
+가능합니다(특히 Android). 다만 “정답=바로 잠금해제” 같은 보안 우회형 콘셉트는 정책·기술적으로 불가하고, 위젯/알림+앱 전환을 기본 UX로 설정해야 현실적입니다. 수익은 구독·B2B SDK 라이선스가 정책 리스크 없이 가장 안전합니다. Android 16의 잠금화면 위젯 공식 표면을 타겟으로 로드맵을 잡으면, 특허·SDK 모두 방어력과 실행력을 동시에 확보할 수 있어요.
+
+1. 매출 구조 설계
+
+SDK 사용료(월정액) + MAU 기반 라이선스 Fee
+
+대기업/에듀테크/핀테크/헬스케어 앱 대상
+
+평균 계약 단가: 월 1천만 원 / 건
+(→ 5개 파트너 확보 시 월 5천만 원 가능)
+
+2. 타겟 파트너사
+(1) 교육앱
+
+듀오링고 (한국 학습자 800만 명) → “오답노트 잠금화면 학습”을 옵션 기능으로 붙이면 유료 구독 유지율↑
+
+뤼이드 산타토익 → 집중 유지율 강화 기능 필요, 모바일 특화라 협업 가능성↑
+
+밀당영어, 콴다 → 학습 데이터 기반 개인화에 관심 많음
+
+(2) 핀테크/생활앱
+
+토스: 금융 퀴즈 잠금화면 → 사용자 락스크린에서 퀴즈 풀고 포인트 지급
+
+뱅크샐러드: 건강/재테크 학습형 잠금화면 → 교육 + 리텐션 강화
+
+카카오페이: 생활밀착형 학습/리워드 기능 → 잠금화면 활용
+
+(3) 헬스케어/웰니스
+
+눔(Noom), MindCafe: 습관형성·마인드케어 퀴즈 SDK
+
+국내 디지털 헬스케어 스타트업: 치매예방 학습 잠금화면 → 고령자 타겟
+
+3. 계약 단가 모델
+
+베이직 패키지 (월 500만 원): SDK 제공 + 기본 기능(오답노트·개인화)
+
+프로 패키지 (월 1천만 원): SDK + 특허라이선스 + 유지보수 + 통계 API
+
+엔터프라이즈 패키지 (월 2천만 원): SDK + 풀특허 + AI 개인화 + 독점 지역권
+
+👉 현실적으로 5개 파트너 × 1천만 원 평균 계약 = 월 5천만 원
+
+4. 영업 시나리오 (로드맵)
+
+MVP 시연
+
+SDK 데모 (안드로이드 알림형 + 학습 연동) 준비
+
+오답노트·난이도 조정 기능 특허 기반임을 강조
+
+교육/핀테크 기업 타겟팅
+
+우선 **국내 중견기업(산타토익·콴다·카카오 계열)**부터 접촉
+
+초기 계약 (500~700만 원/월)
+
+Proof-of-Concept(파일럿) 3개월 → KPI 달성 → 정식 계약 전환
+
+라이선스 확장
+
+특허 우회 위험성 강조 → “SDK 안 쓰면 특허침해 소송 리스크 있음” → 방패 역할 부각
+
+대기업 확장 (토스·카카오·듀오링고)
+
+초기 레퍼런스로 글로벌 협업 진출
+
+5. 리스크 & 대응
+
+리스크: 대기업 자체 개발 → 특허로 막기 어려우면 무력화
+
+대응: 핵심 청구항("잠금화면+오답노트+난이도조정") 등록 완료 → SDK를 사실상 유일 솔루션으로 만들기
+
+---
+
+## 🔬 확장 모듈 연구 개발 결과 (Extensions Research)
+
+### 📊 연구 개요
+특허 기반 기술을 **현실적이고 즉시 구현 가능한** 솔루션으로 전환하기 위해 3개의 확장 모듈을 연구 개발했습니다.
+
+### 🎯 개발된 확장 모듈
+
+#### 1. **Enterprise Analytics Extension** 📈
+**목적**: B2B 기업용 학습 분석 및 비즈니스 인텔리전스  
+**기술 스택**: localStorage 기반 → **IndexedDB 권장**  
+**타겟 시장**: 기업 교육팀, 에듀테크 스타트업  
+**예상 수익**: 월 500만원-1천만원 per 고객
+
+```typescript
+// 사용 예시
+import { RealisticAnalyticsPlugin } from '@locklearn/realistic-analytics';
+
+LockLearn.use(new RealisticAnalyticsPlugin({
+  trackingInterval: 5,
+  retentionDays: 90,
+  enableExport: true
+}));
+
+const report = await LockLearn.generateAnalyticsReport();
+```
+
+#### 2. **Notification Learning Extension** 🔔
+**목적**: 잠금화면 대신 안정적인 알림 기반 마이크로러닝  
+**기술 스택**: Web Notification API + Cron 스케줄링  
+**현실적 대안**: 서버 푸시 + 모바일 앱 알림 권장  
+**타겟 시장**: 모바일 앱 개발사, 콘텐츠 플랫폼
+
+```typescript
+// 사용 예시
+import { NotificationLearningPlugin } from '@locklearn/notification-learning';
+
+LockLearn.use(new NotificationLearningPlugin({
+  notificationsPerDay: 5,
+  adaptiveScheduling: true,
+  platforms: { web: true, mobile: true }
+}));
+
+await LockLearn.startNotificationLearning('user-001');
+```
+
+#### 3. **Simple AI Extension** 🤖
+**목적**: 서버 중심의 실용적 AI 개인화  
+**기술 스택**: 규칙 기반 + 서버 AI (TensorFlow.js 회피)  
+**특징**: 배터리/성능 문제 없는 경량 솔루션  
+**타겟 시장**: 대형 교육 플랫폼, AI 개인화 서비스
+
+```typescript
+// 사용 예시
+import { SimpleAIPlugin } from '@locklearn/simple-ai';
+
+LockLearn.use(new SimpleAIPlugin({
+  serverEndpoint: 'https://api.locklearn.com/ai/v1',
+  cacheEnabled: true,
+  fallbackToRules: true
+}));
+
+const recommendations = await LockLearn.getPersonalizedRecommendations();
+```
+
+### 🚨 Critical Reality Check - 발견된 기술적 한계
+
+#### 웹 기술 스택 제약사항
+1. **localStorage 한계**: 5-10MB 제한, 동기 방식으로 성능 저하
+2. **Web Notification 모바일 문제**: Chrome Android에서 직접 생성 불가
+3. **Browser Cron 불가능**: 탭 종료 시 모든 스케줄 중단
+4. **Enterprise 요구사항 부족**: 웹 기반으로는 기업급 데이터 처리 한계
+
+#### 수정된 현실적 아키텍처
+```typescript
+// 문제 있는 구현
+❌ localStorage + Web Notification + Browser Cron
+
+// 올바른 구현
+✅ IndexedDB + 서버 Push + 서버 스케줄러
+✅ 모바일 앱 + PWA 하이브리드
+✅ 서버 중심 아키텍처
+```
+
+### 💰 수정된 수익 예측
+
+#### Conservative (현실적)
+- **1년차**: 연 1.2억원 (월 1천만원)
+- **3년차**: 연 12억원 (월 1억원)
+
+*기존 예측에서 75% 하향 조정 (시장 현실 반영)*
+
+### 📁 연구 파일 구조
+```
+extensions/
+├── realistic-analytics/        # 기업용 분석 모듈
+├── notification-learning/      # 알림 기반 학습 모듈
+├── simple-ai/                 # 실용적 AI 개인화 모듈
+├── integration-test/           # 통합 테스트
+├── mvp-demo/                  # 인터랙티브 데모
+├── reality-check-report.md    # 실전 테스트 결과
+└── CRITICAL-REALITY-CHECK.md  # 기술적 한계 분석
+```
+
+### 🔄 권장 개발 방향
+
+#### Phase 1: 기술 재검토
+1. **서버 인프라 우선**: 웹 의존성 최소화
+2. **모바일 앱 개발**: 네이티브 알림 및 위젯 지원
+3. **현실적 목표**: 점진적 고객 확보
+
+#### Phase 2: 검증된 기술 스택
+1. **Backend**: Node.js + Database + Redis
+2. **Mobile**: React Native + 네이티브 모듈
+3. **Web**: 캐싱 + 폴링 중심
+
+#### Phase 3: 사업화
+1. **파일럿 고객**: 1-2개 확보 (월 500만원)
+2. **기술 검증**: 실제 운영 환경 테스트
+3. **확장**: 검증된 모델로 스케일링
+
+### 🏆 핵심 학습 사항
+
+1. **브라우저 제약**: 웹 기술만으로는 기업급 솔루션 한계
+2. **현실적 접근**: 과도한 기술적 야심보다 단계적 구현
+3. **시장 검증**: 실제 고객 니즈와 예산 현실 반영
+4. **특허 활용**: 기술적 차별화보다 사업적 방어막 역할
+
+### 📝 결론
+
+특허의 기술적 비전을 현실적 실행력으로 전환하여 **즉시 시장에서 검증받을 수 있는 솔루션**을 연구했습니다. 웹 기술의 한계를 명확히 파악하고, 서버 중심 아키텍처로 재설계하는 것이 성공의 핵심입니다.
+
+**🎯 다음 단계**: 연구 결과를 바탕으로 서버 인프라 구축 및 모바일 앱 개발 착수 권장

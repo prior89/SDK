@@ -1,0 +1,47 @@
+{
+  "name": "@locklearn/simple-ai",
+  "version": "0.1.0",
+  "description": "LockLearn SDK 간단한 AI 개인화 - 서버 중심의 실용적인 학습 개인화 모듈",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js", 
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.esm.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "dev": "tsc -w",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "locklearn",
+    "ai",
+    "personalization",
+    "server-side",
+    "adaptive-learning",
+    "mvp"
+  ],
+  "author": "LockLearn Simple AI Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@locklearn/partner-sdk": "^2.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "rollup": "^4.9.0",
+    "typescript": "^5.3.0"
+  }
+}

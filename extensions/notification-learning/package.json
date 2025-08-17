@@ -1,0 +1,47 @@
+{
+  "name": "@locklearn/notification-learning",
+  "version": "0.1.0", 
+  "description": "LockLearn SDK 알림 기반 마이크로러닝 - 안정적이고 즉시 구현 가능한 학습 시스템",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.esm.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "dev": "tsc -w",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "locklearn",
+    "notification",
+    "microlearning",
+    "push-notification",
+    "mobile-learning",
+    "mvp"
+  ],
+  "author": "LockLearn Notification Team",
+  "license": "MIT", 
+  "peerDependencies": {
+    "@locklearn/partner-sdk": "^2.0.0"
+  },
+  "dependencies": {
+    "cron": "^3.1.0",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/cron": "^2.0.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "rollup": "^4.9.0",
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LockLearn SDK Extensions - MVP 데모</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .demo-card h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .demo-card .description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .demo-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+            border-left: 4px solid #667eea;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .integration-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .integration-demo h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .scenario-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 LockLearn SDK Extensions</h1>
+            <p>현실적이고 즉시 구현 가능한 학습 분석 & AI 개인화 솔루션</p>
+        </header>
+
+        <div class="demo-grid">
+            <!-- 1. Analytics Extension Demo -->
+            <div class="demo-card">
+                <h3>📊 Enterprise Analytics</h3>
+                <div class="description">
+                    기업용 학습 분석 대시보드. 실시간 사용자 활동 추적, 부서별 성과 분석, 
+                    참여도 메트릭스 제공으로 ROI 측정 가능.
+                </div>
+                <div class="demo-controls">
+                    <button class="btn" onclick="demoAnalytics()">학습 세션 추적 시작</button>
+                    <button class="btn" onclick="generateReport()">분석 리포트 생성</button>
+                    <button class="btn" onclick="showEngagement()">참여도 메트릭스 조회</button>
+                </div>
+                <div id="analytics-results" class="results" style="display: none;"></div>
+            </div>
+
+            <!-- 2. Notification Learning Demo -->
+            <div class="demo-card">
+                <h3>🔔 Notification Learning</h3>
+                <div class="description">
+                    알림 기반 마이크로러닝 시스템. 잠금화면 대신 안정적인 알림으로 
+                    개인화된 학습 스케줄링 및 적응형 빈도 조정.
+                </div>
+                <div class="demo-controls">
+                    <button class="btn" onclick="startNotificationLearning()">알림 학습 시작</button>
+                    <button class="btn" onclick="simulateQuizResponse()">퀴즈 응답 시뮬레이션</button>
+                    <button class="btn" onclick="showNotificationHistory()">알림 히스토리 조회</button>
+                </div>
+                <div id="notification-results" class="results" style="display: none;"></div>
+            </div>
+
+            <!-- 3. Simple AI Demo -->
+            <div class="demo-card">
+                <h3>🤖 Simple AI Personalization</h3>
+                <div class="description">
+                    서버 중심의 실용적인 AI 개인화. 복잡한 온디바이스 AI 대신 
+                    규칙 기반 + 서버 AI로 안정적인 개인화 추천 제공.
+                </div>
+                <div class="demo-controls">
+                    <button class="btn" onclick="getLearnerProfile()">학습자 프로필 조회</button>
+                    <button class="btn" onclick="getPersonalizedRecommendations()">개인화 추천 받기</button>
+                    <button class="btn" onclick="adaptDifficulty()">난이도 자동 조정</button>
+                </div>
+                <div id="ai-results" class="results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Integration Demo -->
+        <div class="integration-demo">
+            <h2>🔄 통합 시나리오 데모</h2>
+            <div class="scenario-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>학습 세션</h4>
+                    <p>사용자가 문제를 풀고 Analytics가 자동 추적</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>AI 분석</h4>
+                    <p>성과 분석 후 개인화된 추천 생성</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>알림 최적화</h4>
+                    <p>학습 패턴에 따라 알림 스케줄 자동 조정</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>성과 측정</h4>
+                    <p>종합 분석 리포트로 ROI 확인</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn" onclick="runFullScenario()" style="font-size: 1.2rem; padding: 15px 30px;">
+                    🎯 전체 시나리오 실행
+                </button>
+            </div>
+            
+            <div id="scenario-results" class="results" style="display: none;"></div>
+            
+            <div class="metrics" id="demo-metrics" style="display: none;">
+                <div class="metric">
+                    <div class="metric-value" id="total-users">0</div>
+                    <div class="metric-label">총 사용자</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="total-sessions">0</div>
+                    <div class="metric-label">학습 세션</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="avg-accuracy">0%</div>
+                    <div class="metric-label">평균 정확도</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="engagement-score">0</div>
+                    <div class="metric-label">참여도 점수</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>💡 이 데모는 실제 구현 가능한 현실적 기능들을 보여줍니다</p>
+            <p>특허 기술과 2025년 트렌드를 반영한 안정적인 솔루션</p>
+        </footer>
+    </div>
+
+    <script>
+        // Mock SDK 및 Extensions (실제 환경에서는 import)
+        const MockLockLearn = {
+            isInitialized: false,
+            currentUser: null,
+            
+            async initialize(config) {
+                this.isInitialized = true;
+                return { success: true, partnerId: config.partnerId };
+            },
+            
+            async authenticateUser(userId, token) {
+                this.currentUser = { id: userId, token };
+                return this.currentUser;
+            },
+            
+            // Analytics 확장 메서드들 (mock)
+            async trackLearningSession(session) {
+                return `session-${Date.now()}`;
+            },
+            
+            async generateAnalyticsReport(options) {
+                return {
+                    reportId: `report-${Date.now()}`,
+                    summary: {
+                        totalUsers: Math.floor(Math.random() * 100) + 50,
+                        totalSessions: Math.floor(Math.random() * 500) + 200,
+                        averageAccuracy: Math.floor(Math.random() * 30) + 65,
+                        mostPopularCategory: 'programming'
+                    }
+                };
+            },
+            
+            async getEngagementMetrics() {
+                return {
+                    dailyActiveUsers: Math.floor(Math.random() * 50) + 20,
+                    weeklyActiveUsers: Math.floor(Math.random() * 200) + 100,
+                    averageSessionLength: Math.floor(Math.random() * 20) + 10,
+                    engagementTrend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)]
+                };
+            },
+            
+            // Notification 확장 메서드들 (mock)
+            async startNotificationLearning(userId, schedule) {
+                return { success: true, scheduleId: `schedule-${Date.now()}` };
+            },
+            
+            async respondToQuizNotification(response) {
+                return {
+                    correct: Math.random() > 0.3,
+                    explanation: '정답은 "함수가 절대 반환하지 않음을 나타냄"입니다.',
+                    nextQuizIn: 60
+                };
+            },
+            
+            async getNotificationHistory(userId, days) {
+                return {
+                    totalNotifications: Math.floor(Math.random() * 50) + 20,
+                    responded: Math.floor(Math.random() * 40) + 15,
+                    accuracy: Math.floor(Math.random() * 30) + 60,
+                    averageResponseTime: Math.floor(Math.random() * 20) + 8
+                };
+            },
+            
+            // AI 확장 메서드들 (mock)
+            async getLearnerProfile(userId) {
+                return {
+                    userId,
+                    learningStyle: 'mixed',
+                    preferredDifficulty: 0.6,
+                    strongCategories: [
+                        { category: 'programming', strength: 0.8 },
+                        { category: 'language', strength: 0.7 }
+                    ],
+                    optimalSessionLength: 15,
+                    bestPerformanceTimes: ['09:00', '14:00', '19:00']
+                };
+            },
+            
+            async getPersonalizedRecommendations(userId, context) {
+                return [
+                    {
+                        type: 'content',
+                        title: 'TypeScript 고급 타입 학습',
+                        description: '현재 수준에 맞는 TypeScript 고급 기능을 학습해보세요.',
+                        confidence: 0.85,
+                        impact: 'high'
+                    },
+                    {
+                        type: 'schedule',
+                        title: '오전 9시 학습 추천',
+                        description: '당신의 최고 성과 시간대입니다.',
+                        confidence: 0.9,
+                        impact: 'medium'
+                    }
+                ];
+            },
+            
+            async adaptDifficulty(userId, currentDifficulty, performance) {
+                const newDifficulty = Math.min(1.0, Math.max(0.1, currentDifficulty + (Math.random() - 0.5) * 0.2));
+                return {
+                    newDifficulty: Math.round(newDifficulty * 100) / 100,
+                    reason: '최근 성과를 바탕으로 난이도를 조정했습니다.',
+                    confidence: 0.8
+                };
+            }
+        };
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', async () => {
+            await MockLockLearn.initialize({
+                partnerId: 'demo-partner-001',
+                apiKey: 'demo-api-key',
+                debug: true
+            });
+            
+            await MockLockLearn.authenticateUser('demo-user-001', 'demo-token');
+            
+            console.log('🚀 LockLearn SDK Demo 초기화 완료');
+        });
+
+        // Analytics Demo Functions
+        async function demoAnalytics() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '추적 중...';
+            
+            try {
+                const sessionId = await MockLockLearn.trackLearningSession({
+                    userId: 'demo-user-001',
+                    questionsAnswered: Math.floor(Math.random() * 10) + 5,
+                    correctAnswers: Math.floor(Math.random() * 8) + 2,
+                    categories: ['programming', 'typescript'],
+                    deviceType: 'desktop',
+                    duration: Math.floor(Math.random() * 300) + 120
+                });
+                
+                showResult('analytics-results', `✅ 학습 세션이 추적되었습니다.\n세션 ID: ${sessionId}\n${new Date().toLocaleTimeString()}에 기록됨`, 'success');
+            } catch (error) {
+                showResult('analytics-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '학습 세션 추적 시작';
+            }
+        }
+
+        async function generateReport() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '생성 중...';
+            
+            try {
+                const report = await MockLockLearn.generateAnalyticsReport({
+                    dateRange: { from: '2025-01-01', to: '2025-01-31' }
+                });
+                
+                const result = `📊 분석 리포트 생성 완료
+리포트 ID: ${report.reportId}
+총 사용자: ${report.summary.totalUsers}명
+총 세션: ${report.summary.totalSessions}개
+평균 정확도: ${report.summary.averageAccuracy}%
+인기 카테고리: ${report.summary.mostPopularCategory}`;
+                
+                showResult('analytics-results', result, 'success');
+                updateMetrics(report.summary);
+            } catch (error) {
+                showResult('analytics-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '분석 리포트 생성';
+            }
+        }
+
+        async function showEngagement() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '조회 중...';
+            
+            try {
+                const metrics = await MockLockLearn.getEngagementMetrics();
+                
+                const result = `📈 참여도 메트릭스
+일일 활성 사용자: ${metrics.dailyActiveUsers}명
+주간 활성 사용자: ${metrics.weeklyActiveUsers}명
+평균 세션 길이: ${metrics.averageSessionLength}분
+참여도 트렌드: ${metrics.engagementTrend === 'up' ? '상승 📈' : metrics.engagementTrend === 'down' ? '하락 📉' : '안정 ➡️'}`;
+                
+                showResult('analytics-results', result, 'info');
+            } catch (error) {
+                showResult('analytics-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '참여도 메트릭스 조회';
+            }
+        }
+
+        // Notification Demo Functions
+        async function startNotificationLearning() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '설정 중...';
+            
+            try {
+                const result = await MockLockLearn.startNotificationLearning('demo-user-001', {
+                    preferredTimes: ['09:00', '14:00', '19:00'],
+                    frequency: 'medium',
+                    categories: ['programming', 'language']
+                });
+                
+                const output = `🔔 알림 학습이 시작되었습니다!
+스케줄 ID: ${result.scheduleId}
+알림 시간: 09:00, 14:00, 19:00
+빈도: 보통 (하루 3-5회)
+카테고리: programming, language`;
+                
+                showResult('notification-results', output, 'success');
+            } catch (error) {
+                showResult('notification-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '알림 학습 시작';
+            }
+        }
+
+        async function simulateQuizResponse() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '응답 처리 중...';
+            
+            try {
+                const response = await MockLockLearn.respondToQuizNotification({
+                    notificationId: `notif-${Date.now()}`,
+                    responseTime: new Date().toISOString(),
+                    answer: Math.floor(Math.random() * 4),
+                    confidence: Math.floor(Math.random() * 5) + 1
+                });
+                
+                const result = `📝 퀴즈 응답 결과
+결과: ${response.correct ? '정답 ✅' : '오답 ❌'}
+${response.explanation}
+다음 퀴즈: ${response.nextQuizIn}분 후`;
+                
+                showResult('notification-results', result, response.correct ? 'success' : 'error');
+            } catch (error) {
+                showResult('notification-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '퀴즈 응답 시뮬레이션';
+            }
+        }
+
+        async function showNotificationHistory() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '조회 중...';
+            
+            try {
+                const history = await MockLockLearn.getNotificationHistory('demo-user-001', 7);
+                
+                const result = `📊 알림 히스토리 (지난 7일)
+총 알림: ${history.totalNotifications}개
+응답함: ${history.responded}개
+정확도: ${history.accuracy}%
+평균 응답 시간: ${history.averageResponseTime}초`;
+                
+                showResult('notification-results', result, 'info');
+            } catch (error) {
+                showResult('notification-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '알림 히스토리 조회';
+            }
+        }
+
+        // AI Demo Functions
+        async function getLearnerProfile() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '조회 중...';
+            
+            try {
+                const profile = await MockLockLearn.getLearnerProfile('demo-user-001');
+                
+                const result = `👤 학습자 프로필
+사용자 ID: ${profile.userId}
+학습 스타일: ${profile.learningStyle}
+선호 난이도: ${Math.round(profile.preferredDifficulty * 100)}%
+강점 분야: ${profile.strongCategories.map(c => `${c.category}(${Math.round(c.strength * 100)}%)`).join(', ')}
+최적 세션 길이: ${profile.optimalSessionLength}분
+최고 성과 시간: ${profile.bestPerformanceTimes.join(', ')}`;
+                
+                showResult('ai-results', result, 'info');
+            } catch (error) {
+                showResult('ai-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '학습자 프로필 조회';
+            }
+        }
+
+        async function getPersonalizedRecommendations() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '생성 중...';
+            
+            try {
+                const recommendations = await MockLockLearn.getPersonalizedRecommendations('demo-user-001');
+                
+                let result = '🎯 개인화된 추천:\n\n';
+                recommendations.forEach((rec, index) => {
+                    result += `${index + 1}. ${rec.title}\n`;
+                    result += `   ${rec.description}\n`;
+                    result += `   신뢰도: ${Math.round(rec.confidence * 100)}% | 임팩트: ${rec.impact}\n\n`;
+                });
+                
+                showResult('ai-results', result, 'success');
+            } catch (error) {
+                showResult('ai-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '개인화 추천 받기';
+            }
+        }
+
+        async function adaptDifficulty() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '조정 중...';
+            
+            try {
+                const currentDifficulty = 0.6;
+                const performance = [
+                    { correct: true, timeSpent: 10 },
+                    { correct: true, timeSpent: 8 },
+                    { correct: false, timeSpent: 25 }
+                ];
+                
+                const result = await MockLockLearn.adaptDifficulty('demo-user-001', currentDifficulty, performance);
+                
+                const output = `⚙️ 난이도 자동 조정
+기존 난이도: ${Math.round(currentDifficulty * 100)}%
+새 난이도: ${Math.round(result.newDifficulty * 100)}%
+조정 이유: ${result.reason}
+신뢰도: ${Math.round(result.confidence * 100)}%`;
+                
+                showResult('ai-results', output, 'success');
+            } catch (error) {
+                showResult('ai-results', `❌ 에러: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '난이도 자동 조정';
+            }
+        }
+
+        // Full Scenario Demo
+        async function runFullScenario() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '시나리오 실행 중...';
+            
+            let output = '🎬 통합 시나리오 실행 중...\n\n';
+            
+            try {
+                // Step 1: 학습 세션 시작
+                output += '1️⃣ 학습 세션 시작...\n';
+                const sessionId = await MockLockLearn.trackLearningSession({
+                    userId: 'demo-user-001',
+                    questionsAnswered: 8,
+                    correctAnswers: 6,
+                    categories: ['programming', 'typescript'],
+                    deviceType: 'desktop',
+                    duration: 480
+                });
+                output += `   ✅ 세션 ID: ${sessionId}\n   정확도: 75% (6/8)\n\n`;
+                showResult('scenario-results', output, 'info');
+                
+                await sleep(1000);
+                
+                // Step 2: AI 프로필 업데이트
+                output += '2️⃣ AI 개인화 분석...\n';
+                const profile = await MockLockLearn.getLearnerProfile('demo-user-001');
+                output += `   ✅ 학습 스타일: ${profile.learningStyle}\n   선호 난이도: ${Math.round(profile.preferredDifficulty * 100)}%\n\n`;
+                showResult('scenario-results', output, 'info');
+                
+                await sleep(1000);
+                
+                // Step 3: 개인화 추천 생성
+                output += '3️⃣ 개인화 추천 생성...\n';
+                const recommendations = await MockLockLearn.getPersonalizedRecommendations('demo-user-001');
+                output += `   ✅ ${recommendations.length}개 추천 생성\n   첫 번째 추천: ${recommendations[0]?.title}\n\n`;
+                showResult('scenario-results', output, 'info');
+                
+                await sleep(1000);
+                
+                // Step 4: 알림 스케줄 설정
+                output += '4️⃣ 알림 학습 최적화...\n';
+                const notificationResult = await MockLockLearn.startNotificationLearning('demo-user-001', {
+                    preferredTimes: profile.bestPerformanceTimes,
+                    frequency: 'medium'
+                });
+                output += `   ✅ 스케줄 ID: ${notificationResult.scheduleId}\n   최적 시간: ${profile.bestPerformanceTimes.join(', ')}\n\n`;
+                showResult('scenario-results', output, 'info');
+                
+                await sleep(1000);
+                
+                // Step 5: 분석 리포트 생성
+                output += '5️⃣ 성과 분석 리포트...\n';
+                const report = await MockLockLearn.generateAnalyticsReport({});
+                output += `   ✅ 리포트 ID: ${report.reportId}\n   종합 성과: 우수\n\n`;
+                
+                output += '🎉 통합 시나리오 완료!\n';
+                output += '모든 확장 모듈이 성공적으로 연동되었습니다.';
+                
+                showResult('scenario-results', output, 'success');
+                
+                // 메트릭스 업데이트
+                updateMetrics(report.summary);
+                document.getElementById('demo-metrics').style.display = 'grid';
+                
+            } catch (error) {
+                output += `\n❌ 에러 발생: ${error.message}`;
+                showResult('scenario-results', output, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🎯 전체 시나리오 실행';
+            }
+        }
+
+        // Utility Functions
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = message;
+            element.className = `results ${type}`;
+        }
+
+        function updateMetrics(summary) {
+            document.getElementById('total-users').textContent = summary.totalUsers;
+            document.getElementById('total-sessions').textContent = summary.totalSessions;
+            document.getElementById('avg-accuracy').textContent = summary.averageAccuracy + '%';
+            document.getElementById('engagement-score').textContent = Math.floor(Math.random() * 30) + 70;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 초기 환영 메시지
+        setTimeout(() => {
+            console.log(`
+🚀 LockLearn SDK Extensions MVP Demo
+
+이 데모에서 확인할 수 있는 기능들:
+✅ Enterprise Analytics - 실시간 학습 추적 및 분석
+✅ Notification Learning - 안정적인 알림 기반 마이크로러닝  
+✅ Simple AI - 서버 중심의 실용적 개인화
+✅ 통합 시나리오 - 모든 모듈의 완벽한 연동
+
+각 카드의 버튼을 클릭하여 기능을 체험해보세요!
+            `);
+        }, 1000);
+    </script>
+</body>
+</html>
